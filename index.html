@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحه اصلی</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: white;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            color: black;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer div {
+            margin: 0 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .video-container video {
+            width: 300px;
+            height: 200px;
+        }
+
+        .menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 30px;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: white;
+            width: 50%;
+            height: 100%;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            z-index: 9999;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: black;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .menu.active + .dropdown {
+            display: block;
+        }
+
+        .circle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .circle:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu" onclick="toggleMenu()">&#9776;</div>
+    <div class="dropdown" id="dropdown-menu">
+        <a href="#" onclick="showForm('login')" id="login-option" style="display: none;">ورود</a>
+        <a href="#" onclick="showForm('register')" id="register-option" style="display: none;">ثبت نام</a>
+        <a href="#" onclick="logout()" id="logout-option" style="display: none;">خروج</a>
+        <a href="upload.html" id="upload-option" style="display: none;">افزودن ویدیو</a>
+    </div>
+
+    <div class="video-container" id="video-container"></div>
+
+    <div class="footer">
+        <div onclick="loadVideos()">خانه</div>
+        <div onclick="loadExplore()">کشف</div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.menu').classList.toggle('active');
+            document.querySelector('.dropdown').style.display = document.querySelector('.menu').classList.contains('active') ? 'block' : 'none';
+        }
+
+        function showForm(formType) {
+            if (formType === 'login') {
+                window.location.href = 'login.html';
+            } else if (formType === 'register') {
+                window.location.href = 'register.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('username');
+            localStorage.setItem('isLoggedIn', false);
+            alert('با موفقیت خارج شدید');
+            window.location.href = 'index.html';
+        }
+
+        function loadVideos() {
+            let videos = JSON.parse(localStorage.getItem('videos')) || [];
+            let container = document.getElementById('video-container');
+            container.innerHTML = '';
+
+            videos = videos.sort(() => 0.5 - Math.random());
+            videos.forEach(video => {
+                let videoElement = document.createElement('video');
+                videoElement.src = video;
+                videoElement.controls = true;
+                container.appendChild(videoElement);
+            });
+        }
+
+        function loadExplore() {
+            let videos = JSON.parse(localStorage.getItem('videos')) || [];
+            let container = document.getElementById('video-container');
+            container.innerHTML = '';
+
+            videos.forEach(video => {
+                let videoElement = document.createElement('video');
+                videoElement.src = video;
+                videoElement.controls = true;
+                container.appendChild(videoElement);
+            });
+        }
+
+        window.onload = function() {
+            let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                document.getElementById('logout-option').style.display = 'block';
+                document.getElementById('upload-option').style.display = 'block';
+                document.getElementById('login-option').style.display = 'none';
+                document.getElementById('register-option').style.display = 'none';
+            } else {
+                document.getElementById('logout-option').style.display = 'none';
+                document.getElementById('upload-option').style.display = 'none';
+                document.getElementById('login-option').style.display = 'block';
+                document.getElementById('register-option').style.display = 'block';
+            }
+            loadVideos();
+        };
+    </script>
+
+</body>
+</html>
